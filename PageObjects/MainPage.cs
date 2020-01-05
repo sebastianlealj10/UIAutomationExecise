@@ -1,42 +1,42 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.PageObjects;
 
 namespace UIAutomationExecise.PageObjects.MainPage
 {
     class MainPage
     {
         private readonly IWebDriver _browser;
-        private WebDriverWait _wait;
-        private readonly string _url = @"https://www.ebay.com/";
+        private readonly WebDriverWait _wait;
 
         public MainPage(IWebDriver driver, WebDriverWait wait)
         {
             _browser = driver;
             _wait = wait;
+            PageFactory.InitElements(driver, this);
         }
 
-        protected MainPageElementMap Map
+        [FindsBy(How = How.Id, Using = "gh-ac")]
+        public IWebElement SearchBar { get; set; }
+
+        public string Url
         {
             get
             {
-                return new MainPageElementMap(_browser, _wait);
+                return @"https://www.ebay.com/";
             }
-        }
-
-        public MainPageValidator Validate()
-        {
-            return new MainPageValidator(_browser, _wait);
         }
 
         public void Navigate()
         {
-            _browser.Navigate().GoToUrl(_url);
+            _browser.Navigate().GoToUrl(Url);
         }
 
         public void SearchItems(string item)
         {
-            Map.SearchBar.Clear();
-            Map.SearchBar.SendKeys(item);
+            _wait.Until(d => SearchBar);
+            SearchBar.Clear();
+            SearchBar.SendKeys(item);
         }
 
 
